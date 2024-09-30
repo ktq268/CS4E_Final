@@ -1,0 +1,46 @@
+#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+
+string encodeString(string s) {
+    stack<char> st;
+    string result = "";
+
+    int n = s.length();
+    for (int i = 0; i < n; ++i) {
+        // Đẩy ký tự hiện tại vào stack
+        st.push(s[i]);
+
+        // Kiểm tra các ký tự tiếp theo giống nhau
+        int count = 1;
+        while (i + 1 < n && s[i] == s[i + 1]) {
+            st.push(s[i]);
+            count++;
+            i++;
+        }
+
+        // Lấy ký tự từ stack để tạo thành chuỗi kết quả
+        result += s[i] + to_string(count);
+
+        // Làm sạch stack
+        while (!st.empty()) {
+            st.pop();
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    // Test mẫu
+    string s1 = "aaabbaaac";
+    string s2 = "ab";
+    string s3 = "aaddacc";
+
+    cout << "Test 1: " << encodeString(s1) << endl; // Output: a3b2a3c1
+    cout << "Test 2: " << encodeString(s2) << endl; // Output: a1b1
+    cout << "Test 3: " << encodeString(s3) << endl; // Output: a2d2a1c2
+
+    return 0;
+}

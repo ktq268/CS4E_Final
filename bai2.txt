@@ -1,0 +1,178 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Lớp VeMayBay
+class Vemaybay {
+private:
+    string tenchuyen;
+    string ngaybay;
+    float giave;
+
+public:
+    // Hàm tạo
+    Vemaybay() {
+        tenchuyen = "";
+        ngaybay = "";
+        giave = 0;
+    }
+
+    // Hàm hủy
+    ~Vemaybay() {}
+
+    // Hàm nhập
+    void Nhap() {
+        cout << "Nhap ten chuyen bay: ";
+        getline(cin, tenchuyen);
+        cout << "Nhap ngay bay (dd/mm/yyyy): ";
+        getline(cin, ngaybay);
+        cout << "Nhap gia ve: ";
+        cin >> giave;
+        cin.ignore(); // Loại bỏ ký tự '\n' thừa sau khi nhập
+    }
+
+    // Hàm xuất
+    void Xuat() const {
+        cout << "Ten chuyen: " << tenchuyen << ", Ngay bay: " << ngaybay << ", Gia ve: " << giave << endl;
+    }
+
+    // Hàm trả về giá vé
+    float getgiave() const {
+        return giave;
+    }
+};
+
+// Lớp Nguoi
+class Nguoi {
+protected:
+    string hoten;
+    string gioitinh;
+    int tuoi;
+
+public:
+    // Hàm tạo
+    Nguoi() {
+        hoten = "";
+        gioitinh = "";
+        tuoi = 0;
+    }
+
+    // Hàm hủy
+    ~Nguoi() {}
+
+    // Hàm nhập
+    virtual void Nhap() {
+        cout << "Nhap ho ten: ";
+        getline(cin, hoten);
+        cout << "Nhap gioi tinh: ";
+        getline(cin, gioitinh);
+        cout << "Nhap tuoi: ";
+        cin >> tuoi;
+        cin.ignore(); // Loại bỏ ký tự '\n' thừa sau khi nhập
+    }
+
+    // Hàm xuất
+    virtual void Xuat() const {
+        cout << "Ho ten: " << hoten << ", Gioi tinh: " << gioitinh << ", Tuoi: " << tuoi << endl;
+    }
+};
+
+// Lớp HanhKhach kế thừa từ lớp Nguoi
+class HanhKhach : public Nguoi {
+private:
+    Vemaybay* ve; // Mảng vé
+    int soluong;  // Số lượng vé
+
+public:
+    // Hàm tạo
+    HanhKhach() {
+        ve = nullptr;
+        soluong = 0;
+    }
+
+    // Hàm hủy
+    ~HanhKhach() {
+        if (ve != nullptr) {
+            delete[] ve;
+        }
+    }
+
+    // Hàm nhập
+    void Nhap() override {
+        Nguoi::Nhap(); // Gọi hàm nhập từ lớp cha
+        cout << "Nhap so luong ve may bay: ";
+        cin >> soluong;
+        cin.ignore(); // Loại bỏ ký tự '\n' thừa sau khi nhập
+
+        ve = new Vemaybay[soluong];
+        for (int i = 0; i < soluong; ++i) {
+            cout << "\nNhap thong tin ve thu " << i + 1 << ":" << endl;
+            ve[i].Nhap();
+        }
+    }
+
+    // Hàm xuất
+    void Xuat() const override {
+        Nguoi::Xuat(); // Gọi hàm xuất từ lớp cha
+        cout << "Danh sach ve may bay da mua:\n";
+        for (int i = 0; i < soluong; ++i) {
+            cout << "Ve thu " << i + 1 << ": ";
+            ve[i].Xuat();
+        }
+        cout << "Tong so tien phai tra: " << tongtien() << endl;
+    }
+
+    // Hàm tính tổng tiền phải trả
+    float tongtien() const {
+        float tong = 0;
+        for (int i = 0; i < soluong; ++i) {
+            tong += ve[i].getgiave();
+        }
+        return tong;
+    }
+};
+
+// Hàm chính
+int main() {
+    int n;
+    cout << "Nhap so luong hanh khach: ";
+    cin >> n;
+    cin.ignore(); // Loại bỏ ký tự '\n' thừa sau khi nhập
+
+    // Tạo danh sách hành khách
+    HanhKhach* dshanhkhach = new HanhKhach[n];
+
+    // Nhập thông tin cho từng hành khách
+    for (int i = 0; i < n; ++i) {
+        cout << "\nNhap thong tin cho hanh khach thu " << i + 1 << ":" << endl;
+        dshanhkhach[i].Nhap();
+    }
+
+    // Hiển thị danh sách hành khách và tổng tiền phải trả
+    cout << "\nDanh sach hanh khach va so tien phai tra:\n";
+    for (int i = 0; i < n; ++i) {
+        cout << "\nHanh khach thu " << i + 1 << ":" << endl;
+        dshanhkhach[i].Xuat();
+    }
+
+    // Sắp xếp danh sách hành khách theo chiều giảm dần của tổng tiền
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (dshanhkhach[i].tongtien() < dshanhkhach[j].tongtien()) {
+                swap(dshanhkhach[i], dshanhkhach[j]);
+            }
+        }
+    }
+
+    // Hiển thị danh sách sau khi sắp xếp
+    cout << "\nDanh sach hanh khach sau khi sap xep theo tong tien giam dan:\n";
+    for (int i = 0; i < n; ++i) {
+        cout << "\nHanh khach thu " << i + 1 << ":" << endl;
+        dshanhkhach[i].Xuat();
+    }
+
+    // Giải phóng bộ nhớ
+    delete[] dshanhkhach;
+
+    return 0;
+}

@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+long long sumOfDivisors(int n) {
+    long long sum = 0;
+    int sqrtN = sqrt(n);
+
+    for (int i = 1; i <= sqrtN; i++) {
+        if (n % i == 0) {
+            sum += i;
+            if (i != n / i) {
+                sum += n / i;
+            }
+        }
+    }
+
+    return sum;
+}
+
+int main() {
+    int T;
+    cout<<"Enter the number of test cases:" << endl;
+    cin >> T;
+
+    vector<int> numbers(T);
+
+    // Đọc tất cả các số
+    cout << "Input: " << endl;
+    for (int i = 0; i < T; i++) {
+        cin >> numbers[i];
+    }
+
+    cout<<"_ _ _ _ _ _ _ _ _ " << endl;
+
+    cout << "Output: " << endl;
+    // Tính và in kết quả
+    for (int i = 0; i < T; i++) {
+        cout << sumOfDivisors(numbers[i]) << endl;
+    }
+
+    return 0;
+}

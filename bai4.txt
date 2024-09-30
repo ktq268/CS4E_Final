@@ -1,0 +1,59 @@
+#include <iostream>
+#include <queue>
+#include <cmath>
+using namespace std;
+
+// Hàm kiểm tra số nguyên tố
+bool isPrime(int n) {
+    if (n < 2) return false;
+    for (int i = 2; i <= sqrt(n); i++) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+// Hàm kiểm tra số siêu nguyên tố
+bool isSuperPrime(int n) {
+    while (n > 0) {
+        if (!isPrime(n)) return false;
+        n /= 10;
+    }
+    return true;
+}
+
+// Hàm tìm các số siêu nguyên tố
+void superPrimeNumber(int n) {
+    queue<int> q;
+
+    // Thêm các số siêu nguyên tố một chữ số vào queue
+    for (int i = 2; i <= 9; i++) {
+        if (isPrime(i)) q.push(i);
+    }
+
+    while (!q.empty()) {
+        int current = q.front();
+        q.pop();
+
+        if (current <= n) {
+            cout << current << " ";
+        }
+        else {
+            break; // Dừng nếu số hiện tại lớn hơn n
+        }
+
+        // Tạo các số siêu nguyên tố tiếp theo bằng cách thêm chữ số vào cuối
+        for (int i = 1; i <= 9; i += 2) { // Chỉ xét các chữ số lẻ
+            int next = current * 10 + i;
+            if (next <= n && isSuperPrime(next)) {
+                q.push(next);
+            }
+        }
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    superPrimeNumber(n);
+    return 0;
+}
